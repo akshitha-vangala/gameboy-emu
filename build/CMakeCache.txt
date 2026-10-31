@@ -25,8 +25,10 @@ CMAKE_AR:FILEPATH=C:/msys64/ucrt64/bin/ar.exe
 // MinSizeRel; custom build types may also be defined.
 CMAKE_BUILD_TYPE:STRING=Debug
 
-//CXX compiler
-CMAKE_CXX_COMPILER:STRING=C:/msys64/ucrt64/bin/g++.exe
+//Full path to the compiler used for language <LANG>. Set by CMake
+// during compiler detection on the first configure; users may
+// override on the command line to select a specific toolchain.
+CMAKE_CXX_COMPILER:FILEPATH=C:/msys64/ucrt64/bin/g++.exe
 
 //A wrapper around 'ar' adding the appropriate '--plugin' option
 // for the GCC compiler

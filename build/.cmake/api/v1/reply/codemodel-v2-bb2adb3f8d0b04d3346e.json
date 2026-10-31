@@ -53,7 +53,8 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -75,7 +76,8 @@
 					"name" : "gb-emu",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -86,6 +88,13 @@
 					"id" : "gbemu::@6890427a1f51a3e7e1df",
 					"jsonFile" : "target-gbemu-Debug-b642b98b76dd1f500fcb.json",
 					"name" : "gbemu",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "gbtests::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-gbtests-Debug-90e7499fa2eb6f9f6aa6.json",
+					"name" : "gbtests",
 					"projectIndex" : 0
 				}
 			]
