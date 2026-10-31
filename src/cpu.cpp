@@ -2,6 +2,9 @@
 #include <cstdio>
 #include <cstdlib>
 
+// ---------------------------------------------------------------
+// Register access by 3-bit code (6 = (HL))
+// ---------------------------------------------------------------
 uint8_t CPU::get_r(int code) {
     switch (code) {
         case 0: return reg.b;
@@ -28,6 +31,28 @@ void CPU::set_r(int code, uint8_t v) {
     }
 }
 
+// 16-bit register pair by 2-bit code: 0=BC 1=DE 2=HL 3=SP
+uint16_t CPU::get_rr(int code) const {
+    switch (code) {
+        case 0: return reg.bc();
+        case 1: return reg.de();
+        case 2: return reg.hl();
+        default: return reg.sp;
+    }
+}
+
+void CPU::set_rr(int code, uint16_t v) {
+    switch (code) {
+        case 0: reg.set_bc(v); break;
+        case 1: reg.set_de(v); break;
+        case 2: reg.set_hl(v); break;
+        default: reg.sp = v; break;
+    }
+}
+
+// ---------------------------------------------------------------
+// ALU helpers
+// ---------------------------------------------------------------
 uint8_t CPU::inc8(uint8_t v) {
     uint8_t r = v + 1;
     reg.set_flag(FLAG_Z, r == 0);
@@ -51,7 +76,7 @@ void CPU::alu(int op, uint8_t v) {
     int res;
 
     switch (op) {
-        case 0:  // ADD
+        case 0:    // ADD
         case 1: {  // ADC
             int c = (op == 1) ? carry : 0;
             res = a + v + c;
@@ -62,8 +87,8 @@ void CPU::alu(int op, uint8_t v) {
             reg.a = res & 0xFF;
             break;
         }
-        case 2:  // SUB
-        case 3:  // SBC
+        case 2:    // SUB
+        case 3:    // SBC
         case 7: {  // CP (like SUB but result is discarded)
             int c = (op == 3) ? carry : 0;
             res = a - v - c;
@@ -93,9 +118,48 @@ void CPU::alu(int op, uint8_t v) {
     }
 }
 
+// Shared by ADD SP,e8 and LD HL,SP+e8
+uint16_t CPU::add_sp_e8(int8_t off) {
+    uint16_t sp = reg.sp;
+    uint16_t res = (uint16_t)(sp + off);
+    reg.f = 0;
+    reg.set_flag(FLAG_H, ((sp & 0x0F) + (off & 0x0F)) > 0x0F);
+    reg.set_flag(FLAG_C, ((sp & 0xFF) + (off & 0xFF)) > 0xFF);
+    return res;
+}
+
+// ---------------------------------------------------------------
+// Stack and conditions
+// ---------------------------------------------------------------
+void CPU::push16(uint16_t v) {
+    bus.write(--reg.sp, v >> 8);
+    bus.write(--reg.sp, v & 0xFF);
+}
+
+uint16_t CPU::pop16() {
+    uint8_t lo = bus.read(reg.sp++);
+    uint8_t hi = bus.read(reg.sp++);
+    return (hi << 8) | lo;
+}
+
+bool CPU::cond(int cc) const {
+    switch (cc) {
+        case 0: return !reg.flag(FLAG_Z);  // NZ
+        case 1: return  reg.flag(FLAG_Z);  // Z
+        case 2: return !reg.flag(FLAG_C);  // NC
+        default: return reg.flag(FLAG_C);  // C
+    }
+}
+
+// ---------------------------------------------------------------
+// Fetch -> decode -> execute
+// ---------------------------------------------------------------
 int CPU::step() {
+    bool enable_ime = ime_pending;  // EI takes effect after the NEXT instruction
     uint8_t opcode = fetch8();
-    return execute(opcode);
+    int cycles = execute(opcode);
+    if (enable_ime) { ime = true; ime_pending = false; }
+    return cycles;
 }
 
 int CPU::execute(uint8_t opcode) {
@@ -150,20 +214,195 @@ int CPU::execute(uint8_t opcode) {
         return (r == 6) ? 12 : 8;
     }
 
+    // JR cc, e8  (001cc000)
+    if ((opcode & 0xE7) == 0x20) {
+        int8_t off = (int8_t)fetch8();
+        if (cond((opcode >> 3) & 3)) { reg.pc += off; return 12; }
+        return 8;
+    }
+
+    // JP cc, a16  (110cc010)
+    if ((opcode & 0xE7) == 0xC2) {
+        uint16_t addr = fetch16();
+        if (cond((opcode >> 3) & 3)) { reg.pc = addr; return 16; }
+        return 12;
+    }
+
+    // CALL cc, a16  (110cc100)
+    if ((opcode & 0xE7) == 0xC4) {
+        uint16_t addr = fetch16();
+        if (cond((opcode >> 3) & 3)) { push16(reg.pc); reg.pc = addr; return 24; }
+        return 12;
+    }
+
+    // RET cc  (110cc000)
+    if ((opcode & 0xE7) == 0xC0) {
+        if (cond((opcode >> 3) & 3)) { reg.pc = pop16(); return 20; }
+        return 8;
+    }
+
+    // INC rr (00rr0011) / DEC rr (00rr1011)
+    if ((opcode & 0xCF) == 0x03) { int r = (opcode >> 4) & 3; set_rr(r, get_rr(r) + 1); return 8; }
+    if ((opcode & 0xCF) == 0x0B) { int r = (opcode >> 4) & 3; set_rr(r, get_rr(r) - 1); return 8; }
+
+    // ADD HL, rr (00rr1001)
+    if ((opcode & 0xCF) == 0x09) {
+        uint16_t hl = reg.hl(), v = get_rr((opcode >> 4) & 3);
+        uint32_t res = hl + v;
+        reg.set_flag(FLAG_N, false);
+        reg.set_flag(FLAG_H, ((hl & 0x0FFF) + (v & 0x0FFF)) > 0x0FFF);
+        reg.set_flag(FLAG_C, res > 0xFFFF);
+        reg.set_hl(res & 0xFFFF);
+        return 8;
+    }
+
+    // RST n  (11ttt111): call to address ttt*8
+    if ((opcode & 0xC7) == 0xC7) {
+        push16(reg.pc);
+        reg.pc = opcode & 0x38;
+        return 16;
+    }
+
+    // PUSH rr  (11rr0101): BC, DE, HL, AF
+    if ((opcode & 0xCF) == 0xC5) {
+        switch ((opcode >> 4) & 3) {
+            case 0: push16(reg.bc()); break;
+            case 1: push16(reg.de()); break;
+            case 2: push16(reg.hl()); break;
+            default: push16(reg.af()); break;
+        }
+        return 16;
+    }
+
+    // POP rr  (11rr0001)
+    if ((opcode & 0xCF) == 0xC1) {
+        uint16_t v = pop16();
+        switch ((opcode >> 4) & 3) {
+            case 0: reg.set_bc(v); break;
+            case 1: reg.set_de(v); break;
+            case 2: reg.set_hl(v); break;
+            default: reg.set_af(v); break;  // set_af masks F's low nibble
+        }
+        return 12;
+    }
+
     // ---- Individual opcodes ----
     switch (opcode) {
         case 0x00: return 4;  // NOP
 
+        // 16-bit immediate loads
         case 0x01: reg.set_bc(fetch16()); return 12;  // LD BC,d16
         case 0x11: reg.set_de(fetch16()); return 12;  // LD DE,d16
         case 0x21: reg.set_hl(fetch16()); return 12;  // LD HL,d16
         case 0x31: reg.sp = fetch16();    return 12;  // LD SP,d16
 
+        // Jumps / calls / returns
         case 0xC3: reg.pc = fetch16(); return 16;     // JP a16
+        case 0x18: {                                  // JR e8
+            int8_t off = (int8_t)fetch8();
+            reg.pc += off;
+            return 12;
+        }
+        case 0xE9: reg.pc = reg.hl(); return 4;       // JP HL
+        case 0xCD: {                                  // CALL a16
+            uint16_t addr = fetch16();
+            push16(reg.pc);
+            reg.pc = addr;
+            return 24;
+        }
+        case 0xC9: reg.pc = pop16(); return 16;       // RET
+        case 0xD9: reg.pc = pop16(); ime = true; return 16;  // RETI
+
+        // ---- indirect loads ----
+        case 0x02: bus.write(reg.bc(), reg.a); return 8;   // LD (BC),A
+        case 0x12: bus.write(reg.de(), reg.a); return 8;   // LD (DE),A
+        case 0x0A: reg.a = bus.read(reg.bc()); return 8;   // LD A,(BC)
+        case 0x1A: reg.a = bus.read(reg.de()); return 8;   // LD A,(DE)
+        case 0x22: bus.write(reg.hl(), reg.a); reg.set_hl(reg.hl() + 1); return 8;  // LD (HL+),A
+        case 0x32: bus.write(reg.hl(), reg.a); reg.set_hl(reg.hl() - 1); return 8;  // LD (HL-),A
+        case 0x2A: reg.a = bus.read(reg.hl()); reg.set_hl(reg.hl() + 1); return 8;  // LD A,(HL+)
+        case 0x3A: reg.a = bus.read(reg.hl()); reg.set_hl(reg.hl() - 1); return 8;  // LD A,(HL-)
+
+        case 0xEA: bus.write(fetch16(), reg.a); return 16;          // LD (a16),A
+        case 0xFA: reg.a = bus.read(fetch16()); return 16;          // LD A,(a16)
+        case 0xE0: bus.write(0xFF00 + fetch8(), reg.a); return 12;  // LDH (a8),A
+        case 0xF0: reg.a = bus.read(0xFF00 + fetch8()); return 12;  // LDH A,(a8)
+        case 0xE2: bus.write(0xFF00 + reg.c, reg.a); return 8;      // LD (C),A
+        case 0xF2: reg.a = bus.read(0xFF00 + reg.c); return 8;      // LD A,(C)
+
+        case 0x08: {  // LD (a16),SP
+            uint16_t addr = fetch16();
+            bus.write(addr, reg.sp & 0xFF);
+            bus.write(addr + 1, reg.sp >> 8);
+            return 20;
+        }
+
+        // ---- SP ops ----
+        case 0xF9: reg.sp = reg.hl(); return 8;                         // LD SP,HL
+        case 0xE8: reg.sp = add_sp_e8((int8_t)fetch8()); return 16;     // ADD SP,e8
+        case 0xF8: reg.set_hl(add_sp_e8((int8_t)fetch8())); return 12;  // LD HL,SP+e8
+
+        // ---- accumulator rotates (Z always 0) ----
+        case 0x07: {  // RLCA
+            uint8_t c = reg.a >> 7;
+            reg.a = (reg.a << 1) | c;
+            reg.f = 0; reg.set_flag(FLAG_C, c);
+            return 4;
+        }
+        case 0x0F: {  // RRCA
+            uint8_t c = reg.a & 1;
+            reg.a = (reg.a >> 1) | (c << 7);
+            reg.f = 0; reg.set_flag(FLAG_C, c);
+            return 4;
+        }
+        case 0x17: {  // RLA
+            uint8_t c = reg.a >> 7;
+            reg.a = (reg.a << 1) | (reg.flag(FLAG_C) ? 1 : 0);
+            reg.f = 0; reg.set_flag(FLAG_C, c);
+            return 4;
+        }
+        case 0x1F: {  // RRA
+            uint8_t c = reg.a & 1;
+            reg.a = (reg.a >> 1) | (reg.flag(FLAG_C) ? 0x80 : 0);
+            reg.f = 0; reg.set_flag(FLAG_C, c);
+            return 4;
+        }
+
+        // ---- DAA, CPL, SCF, CCF ----
+        case 0x27: {  // DAA: fix A into valid BCD after add/sub
+            int a = reg.a;
+            if (!reg.flag(FLAG_N)) {
+                if (reg.flag(FLAG_C) || a > 0x99) { a += 0x60; reg.set_flag(FLAG_C, true); }
+                if (reg.flag(FLAG_H) || (a & 0x0F) > 0x09) a += 0x06;
+            } else {
+                if (reg.flag(FLAG_C)) a -= 0x60;
+                if (reg.flag(FLAG_H)) a -= 0x06;
+            }
+            reg.a = a & 0xFF;
+            reg.set_flag(FLAG_Z, reg.a == 0);
+            reg.set_flag(FLAG_H, false);
+            return 4;
+        }
+        case 0x2F:  // CPL
+            reg.a = ~reg.a;
+            reg.set_flag(FLAG_N, true); reg.set_flag(FLAG_H, true);
+            return 4;
+        case 0x37:  // SCF
+            reg.set_flag(FLAG_N, false); reg.set_flag(FLAG_H, false); reg.set_flag(FLAG_C, true);
+            return 4;
+        case 0x3F:  // CCF
+            reg.set_flag(FLAG_N, false); reg.set_flag(FLAG_H, false);
+            reg.set_flag(FLAG_C, !reg.flag(FLAG_C));
+            return 4;
+
+        // ---- misc ----
+        case 0xF3: ime = false; ime_pending = false; return 4;  // DI
+        case 0xFB: ime_pending = true; return 4;                // EI (delayed one instruction)
+        case 0x10: fetch8(); return 4;                          // STOP (treated as NOP for now)
 
         default:
             std::fprintf(stderr, "Unimplemented opcode 0x%02X at PC=0x%04X\n",
-                        opcode, reg.pc - 1);
+                        opcode, (unsigned)(uint16_t)(reg.pc - 1));
             std::exit(1);
     }
 }

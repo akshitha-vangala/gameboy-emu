@@ -7,3 +7,6 @@
 20	561	8151593583897810	CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj	8e4623e261c99e71
 33	582	8151593584028022	CMakeFiles/gbtests.dir/src/cpu.cpp.obj	c068c7f39d4dde13
 584	913	8151593589538796	gbtests.exe	9f2316d720530397
+17	508	8151627136325759	CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj	8e4623e261c99e71
+28	575	8151627136435847	CMakeFiles/gbtests.dir/src/cpu.cpp.obj	c068c7f39d4dde13
+576	906	8151627141912196	gbtests.exe	9f2316d720530397
