@@ -152,6 +152,55 @@ bool CPU::cond(int cc) const {
 }
 
 // ---------------------------------------------------------------
+// CB-prefixed instructions
+// ---------------------------------------------------------------
+
+// Rotate/shift ops for the CB table. Sets all flags.
+uint8_t CPU::cb_shift(int op, uint8_t v) {
+    uint8_t c, r;
+    switch (op) {
+        case 0: c = v >> 7; r = (v << 1) | c; break;                             // RLC
+        case 1: c = v & 1;  r = (v >> 1) | (c << 7); break;                      // RRC
+        case 2: c = v >> 7; r = (v << 1) | (reg.flag(FLAG_C) ? 1 : 0); break;    // RL
+        case 3: c = v & 1;  r = (v >> 1) | (reg.flag(FLAG_C) ? 0x80 : 0); break; // RR
+        case 4: c = v >> 7; r = v << 1; break;                                   // SLA
+        case 5: c = v & 1;  r = (v >> 1) | (v & 0x80); break;                    // SRA (keeps sign bit)
+        case 6: c = 0;      r = (v << 4) | (v >> 4); break;                      // SWAP
+        default: c = v & 1; r = v >> 1; break;                                   // SRL
+    }
+    reg.f = 0;
+    reg.set_flag(FLAG_Z, r == 0);
+    reg.set_flag(FLAG_C, c);
+    return r;
+}
+
+int CPU::execute_cb(uint8_t opcode) {
+    int x = opcode >> 6;
+    int y = (opcode >> 3) & 7;
+    int z = opcode & 7;
+    bool mem = (z == 6);
+
+    switch (x) {
+        case 0:  // rotate / shift / swap
+            set_r(z, cb_shift(y, get_r(z)));
+            return mem ? 16 : 8;
+        case 1: {  // BIT y, r
+            uint8_t v = get_r(z);
+            reg.set_flag(FLAG_Z, (v & (1 << y)) == 0);
+            reg.set_flag(FLAG_N, false);
+            reg.set_flag(FLAG_H, true);
+            return mem ? 12 : 8;
+        }
+        case 2:  // RES y, r
+            set_r(z, get_r(z) & ~(1 << y));
+            return mem ? 16 : 8;
+        default:  // SET y, r
+            set_r(z, get_r(z) | (1 << y));
+            return mem ? 16 : 8;
+    }
+}
+
+// ---------------------------------------------------------------
 // Fetch -> decode -> execute
 // ---------------------------------------------------------------
 int CPU::step() {
@@ -289,6 +338,7 @@ int CPU::execute(uint8_t opcode) {
     // ---- Individual opcodes ----
     switch (opcode) {
         case 0x00: return 4;  // NOP
+        case 0xCB: return execute_cb(fetch8());  // CB prefix
 
         // 16-bit immediate loads
         case 0x01: reg.set_bc(fetch16()); return 12;  // LD BC,d16

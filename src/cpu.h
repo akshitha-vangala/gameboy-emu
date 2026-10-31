@@ -41,6 +41,10 @@ private:
     uint16_t pop16();
     bool cond(int cc) const;
 
+    // CB-prefixed instructions
+    uint8_t cb_shift(int op, uint8_t v);
+    int execute_cb(uint8_t opcode);
+
     int execute(uint8_t opcode);
 
     bool halted = false;
