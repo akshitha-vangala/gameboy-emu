@@ -96,6 +96,15 @@ build CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj: CXX_COMPILER__gbtests_unsca
   OBJECT_FILE_DIR = CMakeFiles\gbtests.dir\tests
   TARGET_SUPPORT_DIR = CMakeFiles\gbtests.dir
 
+build CMakeFiles/gbtests.dir/src/cpu.cpp.obj: CXX_COMPILER__gbtests_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cpu.cpp || cmake_object_order_depends_target_gbtests
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\gbtests.dir\src\cpu.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src
+  OBJECT_DIR = CMakeFiles\gbtests.dir
+  OBJECT_FILE_DIR = CMakeFiles\gbtests.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\gbtests.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target gbtests
@@ -104,7 +113,7 @@ build CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj: CXX_COMPILER__gbtests_unsca
 #############################################
 # Link the executable gbtests.exe
 
-build gbtests.exe: CXX_EXECUTABLE_LINKER__gbtests_Debug CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj
+build gbtests.exe: CXX_EXECUTABLE_LINKER__gbtests_Debug CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj CMakeFiles/gbtests.dir/src/cpu.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

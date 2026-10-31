@@ -1,5 +1,9 @@
 # ninja log v7
-7	1883	8151320881327840	CMakeFiles/gbemu.dir/src/main.cpp.obj	ca998a053ed76513
+16	4844	8151592143661260	CMakeFiles/gbemu.dir/src/main.cpp.obj	ca998a053ed76513
 1896	2246	8151320900209024	gbemu.exe	7757f15b65390667
-26	1907	8151573205328330	CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj	8e4623e261c99e71
+27	991	8151592143781301	CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj	8e4623e261c99e71
 1912	2736	8151573224214326	gbtests.exe	60d2b80bbca6dcb1
+46	473	8151593584153485	gbemu.exe	7757f15b65390667
+20	561	8151593583897810	CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj	8e4623e261c99e71
+33	582	8151593584028022	CMakeFiles/gbtests.dir/src/cpu.cpp.obj	c068c7f39d4dde13
+584	913	8151593589538796	gbtests.exe	9f2316d720530397

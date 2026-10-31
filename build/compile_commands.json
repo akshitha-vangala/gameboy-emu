@@ -10,5 +10,11 @@
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -o CMakeFiles\\gbtests.dir\\tests\\test_cpu.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\tests\\test_cpu.cpp",
   "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/tests/test_cpu.cpp",
   "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj"
+},
+{
+  "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -o CMakeFiles\\gbtests.dir\\src\\cpu.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\cpu.cpp",
+  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cpu.cpp",
+  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbtests.dir/src/cpu.cpp.obj"
 }
 ]
