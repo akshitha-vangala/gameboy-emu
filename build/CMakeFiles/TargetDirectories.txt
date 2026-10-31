@@ -1,0 +1,3 @@
+C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbemu.dir
+C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/edit_cache.dir
+C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -isystem C:/msys64/ucrt64/include/SDL2 -g -std=gnu++17 -Wall -Wextra -o CMakeFiles\\gbemu.dir\\src\\main.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\main.cpp",
+  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/main.cpp",
+  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbemu.dir/src/main.cpp.obj"
+}
+]
