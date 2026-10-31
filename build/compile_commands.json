@@ -1,6 +1,24 @@
 [
 {
   "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -Wall -Wextra -o CMakeFiles\\gbcore.dir\\src\\cpu.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\cpu.cpp",
+  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cpu.cpp",
+  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbcore.dir/src/cpu.cpp.obj"
+},
+{
+  "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -Wall -Wextra -o CMakeFiles\\gbcore.dir\\src\\bus.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\bus.cpp",
+  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/bus.cpp",
+  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbcore.dir/src/bus.cpp.obj"
+},
+{
+  "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -Wall -Wextra -o CMakeFiles\\gbcore.dir\\src\\cartridge.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\cartridge.cpp",
+  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cartridge.cpp",
+  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbcore.dir/src/cartridge.cpp.obj"
+},
+{
+  "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
   "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -isystem C:/msys64/ucrt64/include/SDL2 -g -std=gnu++17 -Wall -Wextra -o CMakeFiles\\gbemu.dir\\src\\main.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\main.cpp",
   "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/main.cpp",
   "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbemu.dir/src/main.cpp.obj"
@@ -13,8 +31,8 @@
 },
 {
   "directory": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -o CMakeFiles\\gbtests.dir\\src\\cpu.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\cpu.cpp",
-  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cpu.cpp",
-  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbtests.dir/src/cpu.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src -g -std=gnu++17 -o CMakeFiles\\gbrun.dir\\src\\gbrun.cpp.obj -c C:\\Users\\akshi\\OneDrive\\Desktop\\gameboy-emu\\src\\gbrun.cpp",
+  "file": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/gbrun.cpp",
+  "output": "C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbrun.dir/src/gbrun.cpp.obj"
 }
 ]

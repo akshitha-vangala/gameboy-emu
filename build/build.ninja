@@ -41,6 +41,60 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/
 # =============================================================================
+# Object build statements for STATIC_LIBRARY target gbcore
+
+
+#############################################
+# Order-only phony target for gbcore
+
+build cmake_object_order_depends_target_gbcore: phony || .
+
+build CMakeFiles/gbcore.dir/src/cpu.cpp.obj: CXX_COMPILER__gbcore_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cpu.cpp || cmake_object_order_depends_target_gbcore
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\gbcore.dir\src\cpu.cpp.obj.d
+  FLAGS = -g -std=gnu++17 -Wall -Wextra
+  INCLUDES = -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src
+  OBJECT_DIR = CMakeFiles\gbcore.dir
+  OBJECT_FILE_DIR = CMakeFiles\gbcore.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\gbcore.dir
+
+build CMakeFiles/gbcore.dir/src/bus.cpp.obj: CXX_COMPILER__gbcore_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/bus.cpp || cmake_object_order_depends_target_gbcore
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\gbcore.dir\src\bus.cpp.obj.d
+  FLAGS = -g -std=gnu++17 -Wall -Wextra
+  INCLUDES = -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src
+  OBJECT_DIR = CMakeFiles\gbcore.dir
+  OBJECT_FILE_DIR = CMakeFiles\gbcore.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\gbcore.dir
+
+build CMakeFiles/gbcore.dir/src/cartridge.cpp.obj: CXX_COMPILER__gbcore_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cartridge.cpp || cmake_object_order_depends_target_gbcore
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\gbcore.dir\src\cartridge.cpp.obj.d
+  FLAGS = -g -std=gnu++17 -Wall -Wextra
+  INCLUDES = -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src
+  OBJECT_DIR = CMakeFiles\gbcore.dir
+  OBJECT_FILE_DIR = CMakeFiles\gbcore.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\gbcore.dir
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target gbcore
+
+
+#############################################
+# Link the static library libgbcore.a
+
+build libgbcore.a: CXX_STATIC_LIBRARY_LINKER__gbcore_Debug CMakeFiles/gbcore.dir/src/cpu.cpp.obj CMakeFiles/gbcore.dir/src/bus.cpp.obj CMakeFiles/gbcore.dir/src/cartridge.cpp.obj
+  CONFIG = Debug
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = CMakeFiles\gbcore.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = libgbcore.a
+  TARGET_PDB = gbcore.a.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\gbcore.dir
+
+# =============================================================================
 # Object build statements for EXECUTABLE target gbemu
 
 
@@ -85,7 +139,7 @@ build gbemu.exe: CXX_EXECUTABLE_LINKER__gbemu_Debug CMakeFiles/gbemu.dir/src/mai
 #############################################
 # Order-only phony target for gbtests
 
-build cmake_object_order_depends_target_gbtests: phony || .
+build cmake_object_order_depends_target_gbtests: phony || cmake_object_order_depends_target_gbcore
 
 build CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj: CXX_COMPILER__gbtests_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/tests/test_cpu.cpp || cmake_object_order_depends_target_gbtests
   CONFIG = Debug
@@ -96,15 +150,6 @@ build CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj: CXX_COMPILER__gbtests_unsca
   OBJECT_FILE_DIR = CMakeFiles\gbtests.dir\tests
   TARGET_SUPPORT_DIR = CMakeFiles\gbtests.dir
 
-build CMakeFiles/gbtests.dir/src/cpu.cpp.obj: CXX_COMPILER__gbtests_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/cpu.cpp || cmake_object_order_depends_target_gbtests
-  CONFIG = Debug
-  DEP_FILE = CMakeFiles\gbtests.dir\src\cpu.cpp.obj.d
-  FLAGS = -g -std=gnu++17
-  INCLUDES = -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src
-  OBJECT_DIR = CMakeFiles\gbtests.dir
-  OBJECT_FILE_DIR = CMakeFiles\gbtests.dir\src
-  TARGET_SUPPORT_DIR = CMakeFiles\gbtests.dir
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target gbtests
@@ -113,10 +158,10 @@ build CMakeFiles/gbtests.dir/src/cpu.cpp.obj: CXX_COMPILER__gbtests_unscanned_De
 #############################################
 # Link the executable gbtests.exe
 
-build gbtests.exe: CXX_EXECUTABLE_LINKER__gbtests_Debug CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj CMakeFiles/gbtests.dir/src/cpu.cpp.obj
+build gbtests.exe: CXX_EXECUTABLE_LINKER__gbtests_Debug CMakeFiles/gbtests.dir/tests/test_cpu.cpp.obj | libgbcore.a || libgbcore.a
   CONFIG = Debug
   FLAGS = -g
-  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  LINK_LIBRARIES = libgbcore.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\gbtests.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -124,6 +169,44 @@ build gbtests.exe: CXX_EXECUTABLE_LINKER__gbtests_Debug CMakeFiles/gbtests.dir/t
   TARGET_IMPLIB = libgbtests.dll.a
   TARGET_PDB = gbtests.exe.dbg
   TARGET_SUPPORT_DIR = CMakeFiles\gbtests.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target gbrun
+
+
+#############################################
+# Order-only phony target for gbrun
+
+build cmake_object_order_depends_target_gbrun: phony || cmake_object_order_depends_target_gbcore
+
+build CMakeFiles/gbrun.dir/src/gbrun.cpp.obj: CXX_COMPILER__gbrun_unscanned_Debug C$:/Users/akshi/OneDrive/Desktop/gameboy-emu/src/gbrun.cpp || cmake_object_order_depends_target_gbrun
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\gbrun.dir\src\gbrun.cpp.obj.d
+  FLAGS = -g -std=gnu++17
+  INCLUDES = -IC:/Users/akshi/OneDrive/Desktop/gameboy-emu/src
+  OBJECT_DIR = CMakeFiles\gbrun.dir
+  OBJECT_FILE_DIR = CMakeFiles\gbrun.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\gbrun.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target gbrun
+
+
+#############################################
+# Link the executable gbrun.exe
+
+build gbrun.exe: CXX_EXECUTABLE_LINKER__gbrun_Debug CMakeFiles/gbrun.dir/src/gbrun.cpp.obj | libgbcore.a || libgbcore.a
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = libgbcore.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\gbrun.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = gbrun.exe
+  TARGET_IMPLIB = libgbrun.dll.a
+  TARGET_PDB = gbrun.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\gbrun.dir
 
 
 #############################################
@@ -151,7 +234,11 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
+build gbcore: phony libgbcore.a
+
 build gbemu: phony gbemu.exe
+
+build gbrun: phony gbrun.exe
 
 build gbtests: phony gbtests.exe
 
@@ -163,7 +250,7 @@ build gbtests: phony gbtests.exe
 #############################################
 # Folder: C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build
 
-build all: phony gbemu.exe gbtests.exe
+build all: phony libgbcore.a gbemu.exe gbtests.exe gbrun.exe
 
 # =============================================================================
 # Built-in targets

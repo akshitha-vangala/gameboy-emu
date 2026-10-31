@@ -1,4 +1,6 @@
+C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbcore.dir
 C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbemu.dir
 C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbtests.dir
+C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/gbrun.dir
 C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/edit_cache.dir
 C:/Users/akshi/OneDrive/Desktop/gameboy-emu/build/CMakeFiles/rebuild_cache.dir
